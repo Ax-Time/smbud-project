@@ -23,3 +23,39 @@ create (a) - [:published_in] -> (j: journal {
 
 return a, au, j
 ```
+<img src="/queries/assets/graph1.svg" />
+
+## Add Author to an already inserted book, and change its author
+
+```cypher
+match (b:book {booktitle: "Encyclopedia of Information Ethics and Security"})
+
+match (b) - [:edited_by] -> (e: editor)
+set e.editor = "Changed editor" 
+
+create (b) - [:authored_by] -> (au: author {
+    author: "Dummy student MOCK"
+})
+
+return b, au, e
+```
+<img src="/queries/assets/graph2.svg" />
+
+## Create new relation between authors
+
+All the authors that have written a thesis in Milan probably knows each other. 
+```cypher
+MATCH (s:school) <- [:submitted_at] - (phdt: phdthesis) - [:authored_by] -> (author: author)
+where s.school =~ '.*Milan.*' and 2013 in phdt.year
+with collect (author) as milanAuthors
+foreach ( i in range(1, size(milanAuthors)-1) | 
+  foreach (au1 in [milanAuthors[i-1]] | foreach ( au2 in [milanAuthors[i]] |  
+    create (au1)-[:probably_knows]-> (au2) 
+    create (au2)-[:probably_knows]-> (au1) 
+    ))
+)
+
+return milanAuthors
+```
+
+<img src="/queries/assets/graph3.svg" />
