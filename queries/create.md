@@ -46,16 +46,20 @@ return b, au, e
 All the authors that have written a thesis in Milan probably knows each other. 
 ```cypher
 MATCH (s:school) <- [:submitted_at] - (phdt: phdthesis) - [:authored_by] -> (author: author)
-where s.school =~ '.*Milan.*' and 2013 in phdt.year
+where s.school =~ '.*Milan.*' and 2020 in phdt.year
 with collect (author) as milanAuthors
-foreach ( i in range(1, size(milanAuthors)-1) | 
-  foreach (au1 in [milanAuthors[i-1]] | foreach ( au2 in [milanAuthors[i]] |  
-    create (au1)-[:probably_knows]-> (au2) 
-    create (au2)-[:probably_knows]-> (au1) 
-    ))
+foreach (au1 in milanAuthors | 
+    foreach(au2 in milanAuthors |
+        merge (au1) - [:probably_knows] -> (au2)
+    )
 )
 
-return milanAuthors
+// Removes reflective property
+with milanAuthors as MA
+match (au: author) - [r: probably_knows] -> (au: author)
+delete r
+
+return MA
 ```
 
 <img src="/queries/assets/graph3.svg" />
