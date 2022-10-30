@@ -42,3 +42,13 @@ where
 return pt, p
 limit 1000
 ```
+
+## Major players
+### Shortest path between Ferruccio Resta and Antonio Capone
+
+```cypher
+match (Ferruccio:author), (AC:author),
+        p = shortestPath((Ferruccio)-[r*]-(AC))
+where none(rel in r where type(rel)="published_in")  and Ferruccio.author =~ ".*Ferruccio Resta.*" and AC.author = "Antonio Capone"
+return p
+```
