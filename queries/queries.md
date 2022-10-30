@@ -11,3 +11,34 @@ where
 return poly_author, p
 ```
 
+## Serial writers
+### Top 10 of the authors that have written the most books belonging to a series
+
+```cypher
+match p = (a:author)<-[:authored_by]-(b:book)-[:is_part_of]->(s:series)
+with a, count(b) as n_books
+order by n_books descending
+return a, n_books
+limit 10
+```
+
+## AI specialists
+### AI-related articles written by authors related to Marco Brambilla
+
+```cypher
+match p = (pt:article)-[:authored_by]->(a:author)-[r*1..3]-(mb:author)
+where 
+    (
+        none(rel in r where type(rel)="published_in") and
+        mb.author = 'Marco Brambilla 0001'
+    ) and
+    (
+        pt.title =~ '.* (?i)A(?i)I .*'or 
+        pt.title =~ '.*(?i)Artificial (?i)Intelligence.*' or
+        pt.title =~ '.*(?i)Learning.*' or
+        pt.title =~ '.*(?i)Agent.*' or
+        pt.title =~ '.*(?i)Neural.*'
+    )
+return pt, p
+limit 1000
+```
