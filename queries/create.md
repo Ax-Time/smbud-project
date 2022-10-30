@@ -63,3 +63,60 @@ return MA
 ```
 
 <img src="/queries/assets/graph3.svg" />
+
+## Create a Series, a Publisher, a Book,  an Editor and an Author
+
+```cypher
+create (p: publisher {
+    publisher: 'Polimi publisher'
+})
+
+create (b: book {
+    title: 'Amazing book'
+})
+
+create (s: series {
+    series: 'An Amazing series'
+})
+
+create (s) <- [:is_part_of] - (b) - [:published_by] -> (p)
+create (b) - [:edited_by] -> (e: editor { editor: 'Polimi editor'})
+create (b) - [:authored_by] -> (a: author { author: 'Amazing author' })
+
+set b.isbn = '978-1-4200-3531-5,978-1-58488-301-2'
+
+return *
+```
+
+<img src="/queries/assets/graph4.svg" />
+
+
+## Create a Machine Learning series, and attach all the books that contains the keyword 'Machine Learning' in the book title. (Part 1)
+
+```cypher
+create (os: series { series: 'Old Machine Learning'})
+with os as OldMachineLearningSeries
+
+match (book: book)
+where book.title =~ '.*(?i)Machine Learning' and book.year < 2000
+create (book) - [:is_part_of] -> (OldMachineLearningSeries)
+
+return *
+```
+<img src="/queries/assets/graph4.svg" />
+
+
+## Create a Machine Learning series, and attach all the books that contains the keyword 'Machine Learning' in the book title. (Part 2)
+
+```cypher
+create (s: series { series: 'Machine Learning'})
+with s as MachineLearningSeries
+
+match (book: book)
+where book.title =~ '.*(?i)Machine Learning' and book.year > 2000
+
+create (book) - [:is_part_of] -> (MachineLearningSeries)
+
+return *
+```
+<img src="/queries/assets/graph6.svg" />
