@@ -45,7 +45,7 @@ return b, au, e
 
 All the authors that have written a thesis in Milan probably knows each other. 
 ```cypher
-MATCH (s:school) <- [:submitted_at] - (phdt: phdthesis) - [:authored_by] -> (author: author)
+match (s:school) <- [:submitted_at] - (phdt: phdthesis) - [:authored_by] -> (author: author)
 where s.school =~ '.*Milan.*' and 2020 in phdt.year
 with collect (author) as milanAuthors
 foreach (au1 in milanAuthors | 
