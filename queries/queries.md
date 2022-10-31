@@ -122,3 +122,17 @@ where nbooks >= 10
 return author, nbooks
 ```
 
+## AI related
+### Number of AI-related articles written by at least two author each year
+
+```cypher
+match (auth1)<-[:authored_by]-(pt:article)-[:authored_by]->(auth2:author)
+where 
+    pt.title =~ '.* (?i)A(?i)I .*'or 
+    pt.title =~ '.*(?i)Artificial (?i)Intelligence.*' or
+    pt.title =~ '.*(?i)Learning.*' or
+    pt.title =~ '.*(?i)Agent.*' or
+    pt.title =~ '.*(?i)Neural.*'
+return distinct(pt.year), count(distinct(pt))
+order by pt.year desc
+```
