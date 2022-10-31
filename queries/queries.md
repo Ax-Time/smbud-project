@@ -53,6 +53,7 @@ where none(rel in r where type(rel)="published_in")  and Ferruccio.author =~ ".*
 return p
 ```
 
+## Related enemies
 ### Shortest path between the actual rector and all the candidates
 
 ```cypher
@@ -66,7 +67,7 @@ return candidate, size(nodes(p)) as distance
 order by distance
 ```
 
-## Most cited phd-thesist
+## PhD dragon
 ### The author of the thesis that has been cited the most
 
 ```cypher
@@ -93,7 +94,7 @@ return p
 limit 50
 ```
 
-## Journals and Polimi
+## PoliMi dominance
 ### Find the journals with the most articles written by people affiliate with PoliMi
 
 ```cypher
