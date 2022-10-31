@@ -43,7 +43,7 @@ return pt, p
 limit 1000
 ```
 
-## TODO
+## Touching the stars
 ### Find a strong connection (made of article and authors) between the author of the most cited article and Marco Brambilla,
 
 ```cypher
