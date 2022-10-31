@@ -52,3 +52,72 @@ match (Ferruccio:author), (AC:author),
 where none(rel in r where type(rel)="published_in")  and Ferruccio.author =~ ".*Ferruccio Resta.*" and AC.author = "Antonio Capone"
 return p
 ```
+
+### Shortest path between the actual rector and all the candidates
+
+```cypher
+match (candidate:author)
+with ['Antonio Capone', 'Donatella Sciuto', 'Giulio Magli'] as candidates, candidate
+where candidate.author in candidates
+with candidate
+
+match p = shortestpath((candidate) - [*] - (rector:author {author: 'Ferruccio Resta'}))
+return candidate, size(nodes(p)) as distance
+order by distance
+```
+
+## Most cited phd-thesist
+### The author of the thesis that has been cited the most
+
+```cypher
+match(sub)-[:submitted_at]->(sch:school)
+with collect(sub.`key`) as keyFromSc
+
+match(cit:cite)<-[r:has_citation]-(any)
+where cit.cite in keyFromSc
+with count(r) as c, cit
+order by c desc 
+limit 1
+
+match(n)-[:authored_by]->(auth:author)
+where n.`key` = cit.cite
+return n, cit, auth, c
+```
+
+## UniBros
+### Find two authors that are affiliates with the same university and have done an inproceedings together
+
+```cypher
+match p = (pr:inproceedings)-[:authored_by]->(a1:author)<-[:authored_by]-(thesis1)-[:submitted_at]->(sch:school)<-[:submitted_at]-(thesis2)-[:authored_by]->(a2:author)<-[:authored_by]-(pr:inproceedings)
+return p
+limit 50
+```
+
+## Journals and Polimi
+### Find the journals with the most articles written by people affiliate with PoliMi
+
+```cypher
+match (j: journal)[: published_in]-(art:article)-[:authored by]-›(auth:author)<-[:authored_by]-()-[:submitted at] ->(s:school)
+where s. school =~ '.*Polytechnic.*Milan.*'
+with count (distinct (art)) as narticles, j
+order by narticles desc
+return j, narticles
+limit 5
+```
+## GG Authors
+### Authors who wrote at least 10 books (total) in series in the top 10 for most books
+
+```cypher
+match (s:series)<-[:is_part_of]-(b:book)
+with count(b) as nbooks, s
+order by nbooks desc
+limit 10
+with collect(s) as topSeries
+
+match (ts:series)<-[:is_part_of]-(b:book)-[:authored_by]->(author:author)
+where ts in topSeries
+with count(b) as nbooks, author
+where nbooks >= 10
+return author, nbooks
+```
+
