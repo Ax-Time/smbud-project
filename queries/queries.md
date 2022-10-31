@@ -122,7 +122,7 @@ where nbooks >= 10
 return author, nbooks
 ```
 
-## AI related
+## AI enthusiasts 2
 ### Number of AI-related articles written by at least two author each year
 
 ```cypher
