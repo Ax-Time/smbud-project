@@ -85,7 +85,7 @@ where n.`key` = cit.cite
 return n, cit, auth, c
 ```
 
-## UniBros
+## Uni-bros
 ### Find two authors that are affiliates with the same university and have done an inproceedings together
 
 ```cypher
