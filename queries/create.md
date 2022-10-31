@@ -103,7 +103,7 @@ create (book) - [:is_part_of] -> (OldMachineLearningSeries)
 
 return *
 ```
-<img src="/queries/assets/graph4.svg" />
+<img src="/queries/assets/graph5.svg" />
 
 
 ## Create a Machine Learning series, and attach all the books that contains the keyword 'Machine Learning' in the book title. (Part 2)
