@@ -43,13 +43,22 @@ return pt, p
 limit 1000
 ```
 
-## Major players
-### Shortest path between Ferruccio Resta and Antonio Capone
+## TODO
+### Find a strong connection (made of article and authors) between the author of the most cited article and Marco Brambilla,
 
 ```cypher
-match (Ferruccio:author), (AC:author),
-        p = shortestPath((Ferruccio)-[r*]-(AC))
-where none(rel in r where type(rel)="published_in")  and Ferruccio.author =~ ".*Ferruccio Resta.*" and AC.author = "Antonio Capone"
+match(cit:cite)<-[r:has_citation]-(any)
+where cit.cite <> '...'
+with cit, count(r) as countRel
+order by countRel desc
+limit 1
+
+match(n:article)-[:authored_by]->(auth:author)
+where n.`key` = cit.cite
+with auth
+
+match p = shortestpath((rest:author {author: 'Marco Brambilla 0001'}) - [*] - (auth))
+where all(x in nodes(p) where x:author or x:article)
 return p
 ```
 
