@@ -44,7 +44,7 @@ limit 1000
 ```
 
 ## Touching the stars
-### Find a strong connection (made of article and authors) between the author of the most cited article and Marco Brambilla,
+### Find a strong connection (made of article and authors) between the author of the most cited article and Marco Brambilla
 
 ```cypher
 match(cit:cite)<-[r:has_citation]-(any)
@@ -62,7 +62,7 @@ where all(x in nodes(p) where x:author or x:article)
 return p
 ```
 
-## Related competitors
+## Major players
 ### Shortest path between the actual rector and all the candidates
 
 ```cypher
