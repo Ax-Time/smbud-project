@@ -53,7 +53,7 @@ where none(rel in r where type(rel)="published_in")  and Ferruccio.author =~ ".*
 return p
 ```
 
-## Related enemies
+## Related competitors
 ### Shortest path between the actual rector and all the candidates
 
 ```cypher
