@@ -107,7 +107,7 @@ limit 50
 ### Find the journals with the most articles written by people affiliate with PoliMi
 
 ```cypher
-match (j: journal)[: published_in]-(art:article)-[:authored by]-›(auth:author)<-[:authored_by]-()-[:submitted at] ->(s:school)
+match (j: journal)<-[:published_in]-(art:article)-[:authored_by]->(auth:author)<-[:authored_by]-()-[:submitted_at]->(s:school)
 where s. school =~ '.*Polytechnic.*Milan.*'
 with count (distinct (art)) as narticles, j
 order by narticles desc
