@@ -72,7 +72,7 @@ where candidate.author in candidates
 with candidate
 
 match p = shortestpath((candidate) - [*] - (rector:author {author: 'Ferruccio Resta'}))
-return candidate, size(nodes(p)) as distance
+return candidate, size(nodes(p)) as distance, p
 order by distance
 ```
 
