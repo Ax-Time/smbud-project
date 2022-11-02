@@ -147,7 +147,7 @@ order by pt.year desc
 ```
 
 ## Finding neighbors
-### Find authors related to another author that have done a PhD Thesis in two different italian universities in the radius of 10km
+### Find authors related to another author that have submiteed a PhD Thesis at two different italian universities in a 10 km radius
 
 ```cypher
 match(s:author)<-[:authored_by]-(phd:phdthesis)-[:submitted_at]->(sch:school {country: 'Italy'})
