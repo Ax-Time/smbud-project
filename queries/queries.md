@@ -145,3 +145,15 @@ where
 return distinct(pt.year), count(distinct(pt))
 order by pt.year desc
 ```
+
+## Finding neighbors
+### Find authors related to another author that have done a PhD Thesis in two different italian universities in the radius of 10km
+
+```cypher
+match(s:author)<-[:authored_by]-(phd:phdthesis)-[:submitted_at]->(sch:school {country: 'Italy'})
+with s, point({latitude: sch.latitude, longitude: sch.longitude}) as uni, sch
+match(s2:author)<-[:authored_by]-(phd2:phdthesis)-[:submitted_at]->(sch2:school {country: 'Italy'})
+with point({latitude: sch2.latitude, longitude: sch2.longitude}) as nearUni, uni, s, sch, s2
+where point.distance(uni, nearUni) < 10000 and sch <> sch2
+return distinct(s.author) as Author, 'has done phd near', collect(s2.author) as Authors
+```
