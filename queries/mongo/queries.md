@@ -48,7 +48,7 @@ db.articles.aggregate([
 ])
 ```
 
-## Query 
+## Query 3
 ### Reconstruct the paper 
 ```
 db.articles.aggregate(
