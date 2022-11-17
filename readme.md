@@ -1,4 +1,4 @@
-# How to run Database Neo4js
+# How to run neo4j database
 
 ### Requirements
  - Make
