@@ -7,7 +7,7 @@ const cors = require('cors')
 app.use(cors())
 
 // Connection URL
-const url = "mongodb://admin:pndKFiW%24%5EcvWDnTl9%24@20.160.120.145:27017";
+const url = "mongodb://admin:pndKFiW%24%5EcvWDnTl9%24@localhost:27017";
 const client = new MongoClient(url);
 // Database Name
 const dbName = "elsevier";
