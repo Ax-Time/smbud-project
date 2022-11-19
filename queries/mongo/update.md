@@ -48,3 +48,12 @@ db.articles.updateMany({},
     }]}
 })
 ```
+
+## Update 4
+### Add a field indicating that an article is old if it was published before 2016
+```
+db.articles.updateMany(
+{"metadata.pub_year": {$lte: 2015}},
+{$set: {"old_publication (>5 yrs)": true}}
+)
+```
