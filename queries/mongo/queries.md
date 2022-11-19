@@ -211,3 +211,48 @@ db.articles.aggregate([
     }
 ])
 ```
+
+## Query 10
+### Authors that wrote about protein folding year by year ordered from the ones that wrote more recently about it
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.authors"
+    },
+    {
+        $match: {
+            "metadata.keywords": {
+                $regex: /^.*[Pp]rotein [Ff]olding.*$/
+            }
+        }
+    },
+    {
+        $group: {
+            "_id": {
+                $concat: ["$metadata.authors.first", " ", "metadata.authors.last"]
+            },
+            year: {
+                $first: "$metadata.pub_year"
+            },
+            author: {
+                $first: {
+                    $concat: ["$metadata.authors.first", " ", "metadata.authors.last"]
+                }
+            }
+        }
+    },
+    {
+        $project: {
+            "_id": 0,
+            "year": 1,
+            "author": 1
+        }
+    },
+    {
+        $sort: {
+            "year": -1
+        }
+    }
+])
+```
