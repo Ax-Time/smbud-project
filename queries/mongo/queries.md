@@ -230,14 +230,14 @@ db.articles.aggregate([
     {
         $group: {
             "_id": {
-                $concat: ["$metadata.authors.first", " ", "metadata.authors.last"]
+                $concat: ["$metadata.authors.first", " ", "$metadata.authors.last"]
             },
             year: {
                 $first: "$metadata.pub_year"
             },
             author: {
                 $first: {
-                    $concat: ["$metadata.authors.first", " ", "metadata.authors.last"]
+                    $concat: ["$metadata.authors.first", " ", "$metadata.authors.last"]
                 }
             }
         }
