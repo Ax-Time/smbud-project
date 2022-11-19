@@ -97,11 +97,12 @@ db.articles.aggregate(
 ```
 
 ## Query 4
-### Find the articles with keyword "Mitochondria" published after 2020 
+### Find the title of articles with open access about protein folding published from 2020
 ```
 db.articles.find({
-    "metadata.keywords": "Mitochondria",
+    "metadata.keywords": {$regex: /^.*[Pp]rotein [Ff]olding.*$/},
     "metadata.pub_year": {$gte: 2020},
+    "metadata.openaccess": {$eq: 'Full'}
 },
 {
     title: "$metadata.title",
@@ -166,31 +167,6 @@ db.articles.aggregate([
 ```
 
 ## Query 8
-### Find all articles with open access about protein folding published from 2020
-
-```
-{
-    $and: [
-        {
-            "metadata.keywords": {
-                $regex: /^.*[Pp]rotein [Ff]olding.*$/
-            }
-        }, 
-        {
-            "metadata.pub_year": {
-                $gte: 2020
-            }
-        }, 
-        {
-            "metadata.openaccess": {
-                $eq: 'Full'
-            }
-        }
-    ]
-}
-```
-
-## Query 9
 ### Retrieve all keywords
 
 ```
@@ -212,7 +188,7 @@ db.articles.aggregate([
 ])
 ```
 
-## Query 10
+## Query 9
 ### Authors that wrote about protein folding year by year ordered from the ones that wrote more recently about it
 
 ```
@@ -257,7 +233,7 @@ db.articles.aggregate([
 ])
 ```
 
-## Query 11
+## Query 10
 ### Articles with the longest titles that have been published recently and are at least 4 pages long
 ```
 db.articles.aggregate([
