@@ -164,3 +164,28 @@ db.articles.aggregate([
 {$project: {"doi": "$_id", "title": 1, "num_refs": 1, "pub_year": 1, "_id": 0}}
 ])
 ```
+
+## Query 8
+### Articles with open access about protein folding published from 2020
+
+```
+{
+    $and: [
+        {
+            "metadata.keywords": {
+                $regex: /^.*[Pp]rotein [Ff]olding.*$/
+            }
+        }, 
+        {
+            "metadata.pub_year": {
+                $gte: 2020
+            }
+        }, 
+        {
+            "metadata.openaccess": {
+                $eq: 'Full'
+            }
+        }
+    ]
+}
+```
