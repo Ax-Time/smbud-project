@@ -256,3 +256,46 @@ db.articles.aggregate([
     }
 ])
 ```
+
+## Query 11
+### Articles with the longest titles that have been published recently and are at least 4 pages long
+```
+db.articles.aggregate([
+    {
+        $addFields: {
+            "pages": "metadata.lastpage" - "metadata.firstpage"
+        }
+    },
+    {
+        $match: {
+            $and: [
+                {
+                    "metadata.pub_year": {
+                        "$geq": 2018
+                    }
+                },
+                {
+                    "pages": {
+                        "$geq": 4
+                    }
+                }
+            ]
+        }
+    },
+    {
+        $addFields: {
+            "title_length": {
+                $strLenCP: "$metadata.title"
+            }
+        }
+    },
+    {
+        $sort: {
+            "title_length": -1
+        }
+    },
+    {
+        $limit: 10
+    }
+])
+```
