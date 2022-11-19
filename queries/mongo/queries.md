@@ -94,3 +94,16 @@ db.articles.aggregate(
 {$sort: {'offset': 1}}]
 )
 ```
+
+## Query 4
+### Find the articles with keyword "Mitochondria" published after 2020 
+```
+db.articles.find({
+    "metadata.keywords": "Mitochondria",
+    "metadata.pub_year": {$gte: 2020},
+},
+{
+    title: "$metadata.title",
+    "_id": 0
+})
+```
