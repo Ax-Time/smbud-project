@@ -44,6 +44,7 @@ db.articles.aggregate([
    _id : "$full_name",
    count : { $sum : 1}
 }},
+{$match: {_id: {$ne: null}}},
 {$sort : { "count" : -1}}
 ])
 ```
@@ -93,4 +94,73 @@ db.articles.aggregate(
 }},
 {$sort: {'offset': 1}}]
 )
+```
+
+## Query 4
+### Find the articles with keyword "Mitochondria" published after 2020 
+```
+db.articles.find({
+    "metadata.keywords": "Mitochondria",
+    "metadata.pub_year": {$gte: 2020},
+},
+{
+    title: "$metadata.title",
+    "_id": 0
+})
+```
+
+## Query 5
+### Find the number of articles about cancer published between 2014 and 2018 (included), ordered by year
+```
+db.articles.aggregate([
+{$match: {$and: [{"metadata.title": {$regex: /[Cc]ancer/}}, {"metadata.pub_year": {"$gte": 2014}, "metadata.pub_year": {"$lte": 2018}}]}},
+{$project: {"_id": 0, "metadata.pub_year": 1, "metadata.title": 1}},
+{$group: {
+        "_id": "$metadata.pub_year",
+        count: {$sum: 1},
+        titles: {
+            $push: {
+                title: "$metadata.title"
+            }
+        }
+    }
+},
+{$sort: {"_id": 1}},
+{$project: {"pub_year": "$_id", "count": 1, "titles": 1, "_id": 0}}
+])
+```
+
+## Query 6
+### Find the articles that reference cancer-related articles
+```
+db.articles.aggregate([
+{$project: {"metadata.pub_year": 1, "metadata.title": 1, "bib_entries": {$objectToArray: "$bib_entries"}}},
+{$unwind: {path: "$bib_entries"}},
+{$match: {"bib_entries.v.title": {$regex: /[Cc]ancer/}}},
+{$group: {
+    "_id": "$_id",
+    title: {$first: "$metadata.title"},
+    num_refs: {$sum: 1},
+    pub_year: {$first: "$metadata.pub_year"}
+}},
+{$sort: {"num_refs": -1}}
+])
+```
+
+## Query 7
+### Find the articles that were cited the most, ordered by the most citations
+```
+db.articles.aggregate([
+{$project: {"metadata.pub_year": 1, "metadata.title": 1, "bib_entries": {$objectToArray: "$bib_entries"}}},
+{$unwind: {path: "$bib_entries"}},
+{$match: {$and: [{"bib_entries.v": {$ne: null}}, {"bib_entries.v.doi": {$ne: null}}]}},
+{$group: {
+    "_id": "$bib_entries.v.doi",
+    title: {$first: "$bib_entries.v.title"},
+    num_refs: {$sum: 1},
+    pub_year: {$first: "$bib_entries.v.pub_year"}
+}},
+{$sort: {"num_refs": -1}},
+{$project: {"doi": "$_id", "title": 1, "num_refs": 1, "pub_year": 1, "_id": 0}}
+])
 ```
