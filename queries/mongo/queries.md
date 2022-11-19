@@ -166,7 +166,7 @@ db.articles.aggregate([
 ```
 
 ## Query 8
-### Articles with open access about protein folding published from 2020
+### Find all articles with open access about protein folding published from 2020
 
 ```
 {
@@ -188,4 +188,26 @@ db.articles.aggregate([
         }
     ]
 }
+```
+
+## Query 9
+### Retrieve all keywords
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.keywords"
+    },
+    {
+        $project: {
+            "_id": 0,
+            "keywords": "$metadata.keywords"
+        }
+    },
+    {
+        $sort: {
+            "keywords": 1
+        }
+    }
+])
 ```
