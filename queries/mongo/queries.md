@@ -275,3 +275,89 @@ db.articles.aggregate([
     }
 ])
 ```
+
+## Query 11
+### Articles with the longest titles that have been published recently and are at least 4 pages long
+
+```
+db.articles.aggregate([
+    {
+        $addFields: {
+            "pages": "metadata.lastpage" - "metadata.firstpage"
+        }
+    },
+    {
+        $match: {
+            $and: [
+                {
+                    "metadata.pub_year": {
+                        "$geq": 2018
+                    }
+                },
+                {
+                    "pages": {
+                        "$geq": 4
+                    }
+                }
+            ]
+        }
+    },
+    {
+        $addFields: {
+            "title_length": {
+                $strLenCP: "$metadata.title"
+            }
+        }
+    },
+    {
+        $sort: {
+            "title_length": -1
+        }
+    },
+    {
+        $limit: 10
+    }
+])
+```
+
+## Query 12
+### Articles with open access written by at least one PoliMi that talk about protein folding and antibodies
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.authors"
+    },
+    {
+        $match: {
+            $and: [
+                {
+                    "metadata.authors.email": {
+                        $regex: /^.*@polimi.*$/
+                    }
+                },
+                {
+                    "metadata.keywords": {
+                        $regex: /^.*[Pp]rotein [Ff]olding.*$/
+                    }
+                },
+                {
+                    "metadata.keywords": {
+                        $regex: /^.*[Aa]ntibody.*$/
+                    }
+                },
+                {
+                    "metadata.openaccess": "Full"
+                }
+            ]
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            title: 1,
+            abstract: 1
+        }
+    }
+])
+```
