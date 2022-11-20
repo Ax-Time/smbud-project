@@ -6,6 +6,9 @@
         :items="articles"
         :options.sync="options"
         :server-items-length="totalArticles"
+        :footer-props="{
+          'items-per-page-options': [10, 20, 30, 40, 50]
+        }"
         :loading="loading"
         class="elevation-1 mt-10"
       >
@@ -13,7 +16,7 @@
             <v-icon
               small
               class="mr-2"
-              @click="$router.push('/article/' + item.docId)"
+              @click="$router.push('/article/' + item._id)"
             >
               mdi-eye
             </v-icon>
@@ -62,12 +65,14 @@ export default {
       this.loading = true
       const { page, itemsPerPage } = this.options
 
+      console.log(this.options)
+
       const { data } = await axios.get(
-        `http://20.160.120.145:3000/articles?pageNumber=${page}&nPerPage=${itemsPerPage}`
+        `http://localhost:3000/articles?pageNumber=${page}&nPerPage=${itemsPerPage}`
       )
 
-      this.articles = data
-      this.totalArticles = 40
+      this.articles = data.result
+      this.totalArticles = data.totalArticles
 
       this.loading = false
     }

@@ -1,5 +1,5 @@
 const express = require('express')
-const {MongoClient} = require('mongodb')
+const {MongoClient, ObjectID} = require('mongodb')
 const app = express()
 const port = 3000
 const cors = require('cors')
@@ -7,7 +7,7 @@ const cors = require('cors')
 app.use(cors())
 
 // Connection URL
-const url = "mongodb://admin:pndKFiW%24%5EcvWDnTl9%24@20.160.120.145:27017";
+const url = "mongodb://admin:pndKFiW%24%5EcvWDnTl9%24@localhost:27017";
 const client = new MongoClient(url);
 // Database Name
 const dbName = "elsevier";
@@ -23,9 +23,11 @@ app.get('/articles/:articleID', async (req, res) => {
     const articleID = req.params.articleID;
     //mongodb://admin:pndKFiW%24%5EcvWDnTl9%24@20.160.120.145:27017/?authMechanism=DEFAULT
 
+    const article = await collection.find({_id: new ObjectID(articleID)}).toArray();
+
 
     const result = await collection.aggregate(
-        [{$match: {docId: articleID}},
+        [{$match: {_id: new ObjectID(articleID)}},
             {$project: {body_text: 1}},
             {$unwind: {path: '$body_text'}},
             {$sort: {'body_text.startOffset': 1}},
@@ -67,7 +69,7 @@ app.get('/articles/:articleID', async (req, res) => {
             {$sort: {'offset': 1}}]
     ).toArray();
 
-    res.send(result);
+    res.send({result, title: article[0].metadata.title});
 })
 
 app.get('/articles', async (req, res) => {
@@ -82,7 +84,7 @@ app.get('/articles', async (req, res) => {
     const nPerPage = Number(req.query.nPerPage)
 
 
-    console.log(nPerPage);
+    const totalArticles = await collection.estimatedDocumentCount({});
 
     const result = await collection
         .find()
@@ -94,7 +96,7 @@ app.get('/articles', async (req, res) => {
         })
         .toArray();
 
-    res.send(result);
+    res.send({result, totalArticles});
 })
 
 function printStudents(pageNumber, nPerPage) {
