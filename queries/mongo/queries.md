@@ -97,11 +97,12 @@ db.articles.aggregate(
 ```
 
 ## Query 4
-### Find the articles with keyword "Mitochondria" published after 2020 
+### Find the title of articles with open access about protein folding published from 2020
 ```
 db.articles.find({
-    "metadata.keywords": "Mitochondria",
+    "metadata.keywords": {$regex: /^.*[Pp]rotein [Ff]olding.*$/},
     "metadata.pub_year": {$gte: 2020},
+    "metadata.openaccess": {$eq: 'Full'}
 },
 {
     title: "$metadata.title",
@@ -162,5 +163,157 @@ db.articles.aggregate([
 }},
 {$sort: {"num_refs": -1}},
 {$project: {"doi": "$_id", "title": 1, "num_refs": 1, "pub_year": 1, "_id": 0}}
+])
+```
+
+## Query 8
+### Retrieve all keywords
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.keywords"
+    },
+    {
+        $project: {
+            "_id": 0,
+            "keywords": "$metadata.keywords"
+        }
+    },
+    {
+        $sort: {
+            "keywords": 1
+        }
+    }
+])
+```
+
+## Query 9
+### Authors that wrote about protein folding year by year ordered from the ones that wrote more recently about it
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.authors"
+    },
+    {
+        $match: {
+            "metadata.keywords": {
+                $regex: /^.*[Pp]rotein [Ff]olding.*$/
+            }
+        }
+    },
+    {
+        $group: {
+            "_id": {
+                $concat: ["$metadata.authors.first", " ", "$metadata.authors.last"]
+            },
+            year: {
+                $first: "$metadata.pub_year"
+            },
+            author: {
+                $first: {
+                    $concat: ["$metadata.authors.first", " ", "$metadata.authors.last"]
+                }
+            }
+        }
+    },
+    {
+        $project: {
+            "_id": 0,
+            "year": 1,
+            "author": 1
+        }
+    },
+    {
+        $sort: {
+            "year": -1
+        }
+    }
+])
+```
+
+## Query 10
+### Articles with the longest titles that have been published recently and are at least 4 pages long
+```
+db.articles.aggregate([
+    {
+        $addFields: {
+            "pages": "metadata.lastpage" - "metadata.firstpage"
+        }
+    },
+    {
+        $match: {
+            $and: [
+                {
+                    "metadata.pub_year": {
+                        "$geq": 2018
+                    }
+                },
+                {
+                    "pages": {
+                        "$geq": 4
+                    }
+                }
+            ]
+        }
+    },
+    {
+        $addFields: {
+            "title_length": {
+                $strLenCP: "$metadata.title"
+            }
+        }
+    },
+    {
+        $sort: {
+            "title_length": -1
+        }
+    },
+    {
+        $limit: 10
+    }
+])
+```
+
+## Query 11
+### Articles with open access written by at least one PoliMi that talk about protein folding and antibodies
+
+```
+db.articles.aggregate([
+    {
+        $unwind: "$metadata.authors"
+    },
+    {
+        $match: {
+            $and: [
+                {
+                    "metadata.authors.email": {
+                        $regex: /^.*@polimi.*$/
+                    }
+                },
+                {
+                    "metadata.keywords": {
+                        $regex: /^.*[Pp]rotein [Ff]olding.*$/
+                    }
+                },
+                {
+                    "metadata.keywords": {
+                        $regex: /^.*[Aa]ntibody.*$/
+                    }
+                },
+                {
+                    "metadata.openaccess": "Full"
+                }
+            ]
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            title: 1,
+            abstract: 1
+        }
+    }
 ])
 ```
