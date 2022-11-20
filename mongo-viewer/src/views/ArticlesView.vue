@@ -68,7 +68,7 @@ export default {
       console.log(this.options)
 
       const { data } = await axios.get(
-        `http://localhost:3000/articles?pageNumber=${page}&nPerPage=${itemsPerPage}`
+        `http://20.160.120.145:3000/articles?pageNumber=${page}&nPerPage=${itemsPerPage}`
       )
 
       this.articles = data.result

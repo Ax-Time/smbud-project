@@ -99,11 +99,6 @@ app.get('/articles', async (req, res) => {
     res.send({result, totalArticles});
 })
 
-function printStudents(pageNumber, nPerPage) {
-
-    collection.find().skip((pageNumber-1)*nPerPage).limit(nPerPage).forEach( function(student) { print(student.name + "<p>"); } );
-}
-
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })

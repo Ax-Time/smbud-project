@@ -41,7 +41,7 @@ export default {
   async created () {
     const articleID = this.$route.params.articleID
     const { data } = await axios.get(
-      `http://localhost:3000/articles/${articleID}`
+      `http://20.160.120.145:3000/articles/${articleID}`
     )
 
     this.title = data.title
