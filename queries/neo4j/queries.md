@@ -77,10 +77,10 @@ order by distance
 ```
 
 ## PhD dragon
-### The author of the thesis that has been cited the most
+### The author of the PhD thesis that has been cited the most
 
 ```cypher
-match(sub)-[:submitted_at]->(sch:school)
+match(sub:phdthesis)-[:submitted_at]->(sch:school)
 with collect(sub.`key`) as keyFromSc
 
 match(cit:cite)<-[r:has_citation]-(any)
