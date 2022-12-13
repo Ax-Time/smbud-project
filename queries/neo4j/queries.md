@@ -80,8 +80,8 @@ order by distance
 ### The author of the PhD thesis that has been cited the most
 
 ```cypher
-match (sub:phdthesis)
-with collect(sub.`key`) as keyFromSc
+match (thesis:phdthesis)
+with collect(thesis.`key`) as keyFromSc
 
 match (cit:cite)<-[r:has_citation]-(any)
 where cit.cite in keyFromSc
@@ -89,9 +89,9 @@ with count(r) as c, cit
 order by c desc 
 limit 1
 
-match (n:phdthesis)-[:authored_by]->(auth:author)
-where n.`key` = cit.cite
-return n, cit, auth, c
+match (thesis:phdthesis)-[:authored_by]->(author:author)
+where thesis.`key` = cit.cite
+return thesis, cit, author, c
 ```
 
 ## Uni-bros
