@@ -50,6 +50,13 @@ articles = articles.withColumn('title', functions.when(col('title') == article_n
 articles.filter(col('title') == new_article_name).show(truncate=True)
 ```
 
+## Update school name
+``` python
+schools = schools.withColumn('school', functions.when(col('school') == 'My Hero Academy', 'My Hero Academia').otherwise(col('school')))
+
+schools.filter(col('school') == 'My Hero Academia').show(truncate=False)
+```
+
 # Delete queries
 
 ## Delete an author
